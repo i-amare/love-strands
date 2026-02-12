@@ -5,12 +5,6 @@ import LetterGrid from "./LetterGrid";
 import TrailOverlay from "./TrailOverlay";
 import { GRID_COLUMNS, GRID_ROWS, STATIC_PUZZLE, toWordFromPath, type GridCell } from "../lib/puzzle";
 import { cellKey, isAdjacent, isSameCell, keyFromCell } from "../lib/selectionRules";
-import { solveWordPath } from "../lib/solveWordPath";
-
-type FoundWordPath = {
-  word: string;
-  path: GridCell[];
-};
 
 type ValidationResponse = {
   valid: boolean;
@@ -28,6 +22,14 @@ type Point = {
 
 const HINT_COST = 3;
 const INVALID_WORD_MESSAGE = "That word is not valid.";
+
+function arePathsEqual(pathA: GridCell[], pathB: GridCell[]): boolean {
+  if (pathA.length !== pathB.length) {
+    return false;
+  }
+
+  return pathA.every((cell, index) => isSameCell(cell, pathB[index]));
+}
 
 async function validateEnglishWord(word: string): Promise<boolean> {
   try {
@@ -51,16 +53,15 @@ async function validateEnglishWord(word: string): Promise<boolean> {
 }
 
 export default function StrandsGame() {
-  const { theme, themeLabel, themeWords, grid } = STATIC_PUZZLE;
-  const normalizedThemeWords = useMemo(() => themeWords.map((word) => word.toUpperCase()), [themeWords]);
-  const themeWordSet = useMemo(() => new Set(normalizedThemeWords), [normalizedThemeWords]);
-  const themeWordPaths = useMemo(() => {
-    const entries = normalizedThemeWords
-      .map((word) => [word, solveWordPath(grid, word)] as const)
-      .filter((entry): entry is readonly [string, GridCell[]] => Array.isArray(entry[1]));
-
-    return new Map(entries);
-  }, [grid, normalizedThemeWords]);
+  const { theme, themeLabel, themeEntries, grid } = STATIC_PUZZLE;
+  const normalizedThemeEntries = useMemo(
+    () =>
+      themeEntries.map((entry) => ({
+        ...entry,
+        word: entry.word.toUpperCase(),
+      })),
+    [themeEntries],
+  );
 
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cellRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -69,13 +70,12 @@ export default function StrandsGame() {
   const [cellCenters, setCellCenters] = useState<Record<string, Point>>({});
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedPath, setSelectedPath] = useState<GridCell[]>([]);
-  const [foundWords, setFoundWords] = useState<string[]>([]);
-  const [foundWordPaths, setFoundWordPaths] = useState<FoundWordPath[]>([]);
+  const [foundEntryIndexes, setFoundEntryIndexes] = useState<number[]>([]);
   const [points, setPoints] = useState(0);
-  const [hintedWord, setHintedWord] = useState<string | null>(null);
+  const [hintedEntryIndex, setHintedEntryIndex] = useState<number | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
 
-  const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
+  const foundEntrySet = useMemo(() => new Set(foundEntryIndexes), [foundEntryIndexes]);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -137,31 +137,36 @@ export default function StrandsGame() {
 
   const foundKeys = useMemo(() => {
     const keys = new Set<string>();
-    for (const item of foundWordPaths) {
-      for (const cell of item.path) {
+    for (const entryIndex of foundEntryIndexes) {
+      const entry = normalizedThemeEntries[entryIndex];
+      if (!entry) {
+        continue;
+      }
+
+      for (const cell of entry.solution) {
         keys.add(keyFromCell(cell));
       }
     }
     return keys;
-  }, [foundWordPaths]);
+  }, [foundEntryIndexes, normalizedThemeEntries]);
 
   const hintedKeys = useMemo(() => {
     const keys = new Set<string>();
-    if (!hintedWord || foundWordSet.has(hintedWord)) {
+    if (hintedEntryIndex === null || foundEntrySet.has(hintedEntryIndex)) {
       return keys;
     }
 
-    const path = themeWordPaths.get(hintedWord);
-    if (!path) {
+    const hintedEntry = normalizedThemeEntries[hintedEntryIndex];
+    if (!hintedEntry) {
       return keys;
     }
 
-    for (const cell of path) {
+    for (const cell of hintedEntry.solution) {
       keys.add(keyFromCell(cell));
     }
 
     return keys;
-  }, [hintedWord, themeWordPaths, foundWordSet]);
+  }, [hintedEntryIndex, normalizedThemeEntries, foundEntrySet]);
 
   function registerCellRef(row: number, col: number, node: HTMLButtonElement | null) {
     cellRefs.current[cellKey(row, col)] = node;
@@ -212,11 +217,15 @@ export default function StrandsGame() {
       return;
     }
 
-    if (themeWordSet.has(word)) {
-      if (!foundWordSet.has(word)) {
-        setFoundWords((current) => [...current, word]);
-        setFoundWordPaths((current) => [...current, { word, path }]);
-      }
+    const matchedThemeEntryIndex = normalizedThemeEntries.findIndex(
+      (entry, entryIndex) => !foundEntrySet.has(entryIndex) && arePathsEqual(path, entry.solution),
+    );
+
+    if (matchedThemeEntryIndex >= 0) {
+      setFoundEntryIndexes((current) =>
+        current.includes(matchedThemeEntryIndex) ? current : [...current, matchedThemeEntryIndex],
+      );
+      setHintedEntryIndex((current) => (current === matchedThemeEntryIndex ? null : current));
       return;
     }
 
@@ -249,12 +258,12 @@ export default function StrandsGame() {
       return;
     }
 
-    const nextHintWord = normalizedThemeWords.find((word) => !foundWordSet.has(word) && themeWordPaths.has(word));
-    if (!nextHintWord) {
+    const nextHintEntryIndex = normalizedThemeEntries.findIndex((_, entryIndex) => !foundEntrySet.has(entryIndex));
+    if (nextHintEntryIndex < 0) {
       return;
     }
 
-    setHintedWord(nextHintWord);
+    setHintedEntryIndex(nextHintEntryIndex);
     setPoints((current) => Math.max(0, current - HINT_COST));
   }
 
@@ -296,7 +305,7 @@ export default function StrandsGame() {
             height={boardSize.height}
             cellCenters={cellCenters}
             activePath={selectedPath}
-            foundPaths={foundWordPaths.map((item) => item.path)}
+            foundPaths={foundEntryIndexes.map((entryIndex) => normalizedThemeEntries[entryIndex]?.solution ?? [])}
           />
           <LetterGrid
             grid={grid}
@@ -324,7 +333,8 @@ export default function StrandsGame() {
           </button>
 
           <p className="progress-tally">
-            <strong>{foundWords.length}</strong> of <strong>{normalizedThemeWords.length}</strong> theme words found.
+            <strong>{foundEntryIndexes.length}</strong> of <strong>{normalizedThemeEntries.length}</strong> theme
+            words found.
           </p>
         </div>
       </div>
