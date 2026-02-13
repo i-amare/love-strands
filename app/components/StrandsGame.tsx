@@ -389,6 +389,7 @@ export default function StrandsGame() {
 
         <p
           className="m-[0.3rem_0_0] min-h-[2.2rem] text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-[2.4rem]"
+          style={{ color: toast?.kind === "error" ? "#ff6467" : "var(--foreground)" }}
           aria-live="polite"
         >
           {selectedWord || toast?.message || "\u00A0"}
