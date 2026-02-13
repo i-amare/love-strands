@@ -1,20 +1,21 @@
 // import englishWords from "an-array-of-english-words";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import fs from 'node:fs';
+import wordListPath from 'word-list';
 
-// const wordSet = new Set((englishWords as string[]).map((word) => word.toUpperCase()));
-const MIN_WORD_LENGTH = 3;
+const wordArray = fs.readFileSync(wordListPath, 'utf8').split('\n');
+const wordSet = new Set(wordArray.map((word) => word.toUpperCase()));
+const MIN_WORD_LENGTH = 4;
 
 type ValidateWordPayload = {
   word?: string;
 };
 
 export async function POST(request: Request) {
-  // const payload = (await request.json()) as ValidateWordPayload;
-  // const normalizedWord = payload.word?.trim().toUpperCase() ?? "";
-  // const isValid = normalizedWord.length >= MIN_WORD_LENGTH && wordSet.has(normalizedWord);
-
-  const ranNum = Math.round(Math.random()*100)
-  const isValid = ranNum > 40
+  const payload = (await request.json()) as ValidateWordPayload;
+  const normalizedWord = payload.word?.trim().toUpperCase() ?? '';
+  const isValid =
+    normalizedWord.length >= MIN_WORD_LENGTH && wordSet.has(normalizedWord);
 
   return NextResponse.json({ valid: isValid });
 }
