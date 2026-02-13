@@ -95,10 +95,11 @@ export default function StrandsGame() {
   const [points, setPoints] = useState(0);
   const [hintedEntryIndex, setHintedEntryIndex] = useState<number | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
+  const [completionPopupDismissed, setCompletionPopupDismissed] = useState(false);
 
   const foundEntrySet = useMemo(() => new Set(foundEntryIndexes), [foundEntryIndexes]);
   const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
-  const [spangramEntryIndex, setSpangramEntryIndex] = useState(themeEntries.length - 1);
+  const [spangramEntryIndex] = useState(themeEntries.length - 1);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -172,7 +173,7 @@ export default function StrandsGame() {
       }
     }
     return keys;
-  }, [foundEntryIndexes, normalizedThemeEntries]);
+  }, [foundEntryIndexes, normalizedThemeEntries, spangramEntryIndex]);
 
   const spangramKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -365,6 +366,9 @@ export default function StrandsGame() {
   const hintChargeLevel = Math.min(points, HINT_COST);
   const hintChargePercent = (hintChargeLevel / HINT_COST) * 100;
   const canUseHint = points >= HINT_COST;
+  const isPuzzleComplete =
+    normalizedThemeEntries.length > 0 && foundEntryIndexes.length === normalizedThemeEntries.length;
+  const showCompletionPopup = isPuzzleComplete && !completionPopupDismissed;
 
   return (
     <main
@@ -446,6 +450,31 @@ export default function StrandsGame() {
           </p>
         </div>
       </div>
+
+      {showCompletionPopup ? (
+        <div
+          className="valentine-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Valentine&apos;s Day celebration"
+        >
+          <div className="valentine-card">
+            <p className="m-0 font-love text-[clamp(2rem,7vw,3.2rem)] leading-[1.1] tracking-[0.03em] text-(--pink-accent-bright)">
+              Happy Valentine&apos;s Day
+            </p>
+            <p className="m-0 text-[clamp(1.15rem,4.4vw,1.7rem)] font-semibold tracking-[0.02em] text-white">
+              I love you
+            </p>
+            <button
+              type="button"
+              className="valentine-close"
+              onClick={() => setCompletionPopupDismissed(true)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
