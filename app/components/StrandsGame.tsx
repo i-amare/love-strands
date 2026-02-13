@@ -330,25 +330,21 @@ export default function StrandsGame() {
 
   return (
     <main
-      className="min-h-svh flex justify-center px-[0.65rem] bg-[radial-gradient(circle_at_50%_15%,rgba(255,139,193,0.16),transparent_38%),radial-gradient(circle_at_50%_60%,rgba(30,37,58,0.55),transparent_55%),var(--background)]"
-      style={{
-        paddingTop: "max(0.75rem, var(--safe-area-top))",
-        paddingBottom: "max(1.3rem, var(--safe-area-bottom))",
-      }}
+      className="min-h-svh flex justify-center p-6"
     >
       <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
-        <h1 className="m-0 text-center font-love text-[clamp(2rem,9vw,3.1rem)] leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
+        <h1 className="m-0 text-center font-love text-4xl pb-4 leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
           Love Strands
         </h1>
 
         <section
-          className="overflow-hidden rounded-[0.95rem] border border-(--theme-card-border) bg-[rgba(8,10,18,0.92)] shadow-[0_15px_32px_rgba(0,0,0,0.35)]"
+          className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg"
           aria-label="Today's Theme"
         >
-          <p className="m-0 text-center text-[clamp(1rem,4.3vw,1.6rem)] font-extrabold uppercase tracking-[0.04em] [background:color-mix(in_oklab,var(--theme-teal)_90%,#052331_10%)]">
+          <p className="m-0 text-center text-lg font-extrabold uppercase bg-teal-600 text-white tracking-[0.04em]">
           Today's Theme
           </p>
-          <h2 className="m-0 px-2 py-[0.48rem] pb-[0.65rem] text-center text-[clamp(1.95rem,8vw,2.7rem)] leading-[1.1] font-bold">
+          <h2 className="m-0 px-2 py-4 text-center text-2xl font-bold">
             {theme}
           </h2>
         </section>
