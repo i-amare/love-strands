@@ -405,7 +405,7 @@ export default function StrandsGame() {
             </span>
           </button>
 
-          <p className="m-0 text-right text-[clamp(1.1rem,5vw,2.2rem)] leading-[1.1]">
+          <p className="m-0 text-right text-lg leading-normal">
             <strong>{foundEntryIndexes.length}</strong> of <strong>{normalizedThemeEntries.length}</strong> theme
             words found.
           </p>
