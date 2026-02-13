@@ -35,6 +35,20 @@ export default function LetterGrid({
       {grid.map((row, rowIndex) =>
         row.map((letter, colIndex) => {
           const key = cellKey(rowIndex, colIndex);
+          const isSelected = selectedKeys.has(key);
+          const isFound = foundKeys.has(key);
+          const tileStyle: React.CSSProperties | undefined = isFound
+            ? {
+                backgroundColor: "var(--trail-blue)",
+                color: "var(--foreground)",
+                boxShadow: "inset 0 0 0 2px rgba(76,144,255,0.9)",
+              }
+            : isSelected
+              ? {
+                  backgroundColor: "var(--trail-grey)",
+                  boxShadow: "inset 0 0 0 2px rgba(229,231,235,0.9)",
+                }
+              : undefined;
 
           return (
             <button
@@ -42,16 +56,11 @@ export default function LetterGrid({
               type="button"
               className={[
                 "relative z-3 grid w-full aspect-square place-items-center rounded-full border-0 bg-transparent text-gray-200 text-2xl leading-none tracking-[0.02em] uppercase transition-[background-color,color,box-shadow] duration-120 ease-[ease]",
-                selectedKeys.has(key)
-                  ? "bg-[rgba(245,204,54,0.22)] shadow-[inset_0_0_0_2px_rgba(229,231,235,0.9)]"
-                  : "",
-                foundKeys.has(key)
-                  ? "bg-[rgba(76,144,255,0.38)] text-[#ecf4ff] shadow-[inset_0_0_0_2px_rgba(76,144,255,0.9)]"
-                  : "",
                 hintedKeys.has(key) ? "is-hinted" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
+              style={tileStyle}
               data-row={rowIndex}
               data-col={colIndex}
               onPointerDown={(event) => onCellPointerDown(rowIndex, colIndex, event)}
