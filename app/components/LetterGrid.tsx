@@ -6,6 +6,7 @@ type LetterGridProps = {
   grid: string[][];
   selectedKeys: Set<string>;
   foundKeys: Set<string>;
+  spangramKeys: Set<string>;
   hintedKeys: Set<string>;
   onCellPointerDown: (row: number, col: number, event: React.PointerEvent<HTMLButtonElement>) => void;
   registerCellRef: (row: number, col: number, node: HTMLButtonElement | null) => void;
@@ -15,6 +16,7 @@ export default function LetterGrid({
   grid,
   selectedKeys,
   foundKeys,
+  spangramKeys,
   hintedKeys,
   onCellPointerDown,
   registerCellRef,
@@ -37,7 +39,14 @@ export default function LetterGrid({
           const key = cellKey(rowIndex, colIndex);
           const isSelected = selectedKeys.has(key);
           const isFound = foundKeys.has(key);
-          const tileStyle: React.CSSProperties | undefined = isFound
+          const isSpangram = spangramKeys.has(key);
+          const tileStyle: React.CSSProperties | undefined = isSpangram
+            ? {
+                backgroundColor: "var(--trail-yellow)",
+                color: "var(--foreground)",
+                boxShadow: "inset 0 0 0 2px var(--trail-yellow)",
+              }
+            : isFound
             ? {
                 backgroundColor: "var(--trail-blue)",
                 color: "var(--foreground)",

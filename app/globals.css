@@ -9,6 +9,7 @@
   --pink-accent-bright: #ffb0d9;
   --trail-grey: #707d96;
   --trail-blue: #4c90ff;
+  --trail-yellow: #f4d84d;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }

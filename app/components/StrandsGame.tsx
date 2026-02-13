@@ -11,7 +11,7 @@ type ValidationResponse = {
 };
 
 type ToastState = {
-  kind: "error";
+  kind: "error" | "info";
   message: string;
 } | null;
 
@@ -24,6 +24,7 @@ const HINT_COST = 3;
 const INVALID_WORD_MESSAGE = "Invalid";
 const TOO_SHORT_WORD_MESSAGE = "Too short";
 const ALREADY_FOUND_WORD_MESSAGE = "Already found";
+const SPANGRAM_FOUND_MESSAGE = "SPANGRAM!!";
 
 
 function cellFromElement(node: Element | null): GridCell | null {
@@ -97,6 +98,7 @@ export default function StrandsGame() {
 
   const foundEntrySet = useMemo(() => new Set(foundEntryIndexes), [foundEntryIndexes]);
   const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
+  const [spangramEntryIndex, setSpangramEntryIndex] = useState(themeEntries.length - 1);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -161,7 +163,7 @@ export default function StrandsGame() {
     const keys = new Set<string>();
     for (const entryIndex of foundEntryIndexes) {
       const entry = normalizedThemeEntries[entryIndex];
-      if (!entry) {
+      if (!entry || entryIndex == spangramEntryIndex) {
         continue;
       }
 
@@ -171,6 +173,24 @@ export default function StrandsGame() {
     }
     return keys;
   }, [foundEntryIndexes, normalizedThemeEntries]);
+
+  const spangramKeys = useMemo(() => {
+    const keys = new Set<string>();
+    if (spangramEntryIndex < 0 || !foundEntrySet.has(spangramEntryIndex)) {
+      return keys;
+    }
+
+    const spangramEntry = normalizedThemeEntries[spangramEntryIndex];
+    if (!spangramEntry) {
+      return keys;
+    }
+
+    for (const cell of spangramEntry.solution) {
+      keys.add(keyFromCell(cell));
+    }
+
+    return keys;
+  }, [foundEntrySet, normalizedThemeEntries, spangramEntryIndex]);
 
   const hintedKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -258,6 +278,9 @@ export default function StrandsGame() {
       setFoundEntryIndexes((current) => [...current, matchedThemeEntryIndex]);
       setFoundWords((current) => (current.includes(word) ? current : [...current, word]));
       setHintedEntryIndex((current) => (current === matchedThemeEntryIndex ? null : current));
+      if (matchedThemeEntryIndex === spangramEntryIndex) {
+        setToast({ kind: "info", message: SPANGRAM_FOUND_MESSAGE });
+      }
       return;
     }
 
@@ -383,12 +406,14 @@ export default function StrandsGame() {
             height={boardSize.height}
             cellCenters={cellCenters}
             activePath={selectedPath}
-            foundPaths={foundEntryIndexes.map((entryIndex) => normalizedThemeEntries[entryIndex]?.solution ?? [])}
+            foundPaths={foundEntryIndexes.filter((entryIndex) => entryIndex !== spangramEntryIndex).map((entryIndex) => normalizedThemeEntries[entryIndex]?.solution ?? [])}
+            spangramPaths={foundEntryIndexes.includes(spangramEntryIndex) ? [normalizedThemeEntries[spangramEntryIndex]?.solution ?? []] : []}
           />
           <LetterGrid
             grid={grid}
             selectedKeys={selectedKeys}
             foundKeys={foundKeys}
+            spangramKeys={spangramKeys}
             hintedKeys={hintedKeys}
             onCellPointerDown={handleCellPointerDown}
             registerCellRef={registerCellRef}

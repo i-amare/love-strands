@@ -14,6 +14,7 @@ type TrailOverlayProps = {
   cellCenters: Record<string, Point>;
   activePath: GridCell[];
   foundPaths: GridCell[][];
+  spangramPaths: GridCell[][];
 };
 
 function polylinePoints(path: GridCell[], centers: Record<string, Point>): string {
@@ -30,6 +31,7 @@ export default function TrailOverlay({
   cellCenters,
   activePath,
   foundPaths,
+  spangramPaths,
 }: TrailOverlayProps) {
   if (width === 0 || height === 0) {
     return null;
@@ -52,6 +54,20 @@ export default function TrailOverlay({
           <polyline
             key={`found-${index}`}
             className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-blue)"
+            points={points}
+          />
+        );
+      })}
+      {spangramPaths.map((path, index) => {
+        const points = polylinePoints(path, cellCenters);
+        if (!points) {
+          return null;
+        }
+
+        return (
+          <polyline
+            key={`spangram-${index}`}
+            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-yellow)"
             points={points}
           />
         );
