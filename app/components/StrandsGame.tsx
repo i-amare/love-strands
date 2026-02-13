@@ -423,7 +423,7 @@ export default function StrandsGame() {
         <div className="mt-[0.45rem] flex items-center justify-between gap-[0.8rem]">
           <button
             type="button"
-            className={`relative inline-flex h-10 min-w-22 items-center justify-center overflow-hidden rounded-full border-2 bg-gray-400 text-[#d8d9e2] disabled:opacity-100 ${
+            className={`relative inline-flex h-10 min-w-22 items-center justify-center overflow-hidden rounded-full border-2 text-[#d8d9e2] disabled:opacity-100 ${
               canUseHint ? "cursor-pointer border-[#f5f6fb]" : "cursor-not-allowed border-[#272a35]"
             }`}
             onClick={useHint}
@@ -434,7 +434,7 @@ export default function StrandsGame() {
               style={{ width: `${hintChargePercent}%` }}
               aria-hidden="true"
             />
-            <span className="relative z-1 text-xl tracking-[0.01em] text-[#1b1d26] mix-blend-difference">
+            <span className="relative z-1 text-xl tracking-[0.01em] mix-blend-difference">
               Hint
             </span>
           </button>
