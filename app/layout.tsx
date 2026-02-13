@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Dancing_Script, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -20,6 +20,12 @@ const dancingScript = Dancing_Script({
 export const metadata: Metadata = {
   title: "Love Strands",
   description: "A Valentine-themed Strands clone.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

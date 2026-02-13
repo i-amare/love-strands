@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { GRID_COLUMNS, GRID_ROWS, STATIC_PUZZLE, toWordFromPath, type GridCell } from "../lib/puzzle";
 import { cellKey, isAdjacent, isSameCell, keyFromCell } from "../lib/selectionRules";
 import LetterGrid from "./LetterGrid";
@@ -22,6 +22,21 @@ type Point = {
 
 const HINT_COST = 3;
 const INVALID_WORD_MESSAGE = "That word is not valid.";
+
+function cellFromElement(node: Element | null): GridCell | null {
+  const cellNode = node?.closest<HTMLButtonElement>("[data-row][data-col]");
+  if (!cellNode) {
+    return null;
+  }
+
+  const rowValue = Number.parseInt(cellNode.dataset.row ?? "", 10);
+  const colValue = Number.parseInt(cellNode.dataset.col ?? "", 10);
+  if (Number.isNaN(rowValue) || Number.isNaN(colValue)) {
+    return null;
+  }
+
+  return { row: rowValue, col: colValue };
+}
 
 function arePathsEqual(pathA: GridCell[], pathB: GridCell[]): boolean {
   if (pathA.length !== pathB.length) {
@@ -65,6 +80,7 @@ export default function StrandsGame() {
  
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cellRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const activePointerIdRef = useRef<number | null>(null);
 
   const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
   const [cellCenters, setCellCenters] = useState<Record<string, Point>>({});
@@ -179,6 +195,17 @@ export default function StrandsGame() {
     setSelectedPath([{ row, col }]);
   }
 
+  function handleCellPointerDown(row: number, col: number, event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    activePointerIdRef.current = event.pointerId;
+    boardRef.current?.setPointerCapture(event.pointerId);
+    beginSelection(row, col);
+  }
+
   function extendSelection(row: number, col: number) {
     if (!isSelecting) {
       return;
@@ -249,6 +276,40 @@ export default function StrandsGame() {
     await resolveSelection(snapshot);
   }
 
+  function handleBoardPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!isSelecting || activePointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    event.preventDefault();
+    const cell = cellFromElement(document.elementFromPoint(event.clientX, event.clientY));
+    if (!cell) {
+      return;
+    }
+
+    extendSelection(cell.row, cell.col);
+  }
+
+  function handleBoardPointerUp(event: ReactPointerEvent<HTMLDivElement>) {
+    if (activePointerIdRef.current !== null && activePointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    if (boardRef.current?.hasPointerCapture(event.pointerId)) {
+      boardRef.current.releasePointerCapture(event.pointerId);
+    }
+    activePointerIdRef.current = null;
+    void finishSelection();
+  }
+
+  function handleBoardPointerCancel(event: ReactPointerEvent<HTMLDivElement>) {
+    if (boardRef.current?.hasPointerCapture(event.pointerId)) {
+      boardRef.current.releasePointerCapture(event.pointerId);
+    }
+    activePointerIdRef.current = null;
+    clearSelection();
+  }
+
   function useHint() {
     if (points < HINT_COST) {
       return;
@@ -268,7 +329,13 @@ export default function StrandsGame() {
   const canUseHint = points >= HINT_COST;
 
   return (
-    <main className="min-h-svh flex justify-center px-[0.65rem] pt-3 pb-[1.3rem] bg-[radial-gradient(circle_at_50%_15%,rgba(255,139,193,0.16),transparent_38%),radial-gradient(circle_at_50%_60%,rgba(30,37,58,0.55),transparent_55%),var(--background)]">
+    <main
+      className="min-h-svh flex justify-center px-[0.65rem] bg-[radial-gradient(circle_at_50%_15%,rgba(255,139,193,0.16),transparent_38%),radial-gradient(circle_at_50%_60%,rgba(30,37,58,0.55),transparent_55%),var(--background)]"
+      style={{
+        paddingTop: "max(0.75rem, var(--safe-area-top))",
+        paddingBottom: "max(1.3rem, var(--safe-area-bottom))",
+      }}
+    >
       <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
         <h1 className="m-0 text-center font-love text-[clamp(2rem,9vw,3.1rem)] leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
           Love Strands
@@ -301,11 +368,10 @@ export default function StrandsGame() {
 
         <div
           ref={boardRef}
-          className="relative mx-auto mt-[0.2rem] w-full max-w-120"
-          onPointerUp={() => {
-            void finishSelection();
-          }}
-          onPointerCancel={clearSelection}
+          className="relative mx-auto mt-[0.2rem] w-full max-w-120 px-8"
+          onPointerMove={handleBoardPointerMove}
+          onPointerUp={handleBoardPointerUp}
+          onPointerCancel={handleBoardPointerCancel}
         >
           <TrailOverlay
             width={boardSize.width}
@@ -319,11 +385,7 @@ export default function StrandsGame() {
             selectedKeys={selectedKeys}
             foundKeys={foundKeys}
             hintedKeys={hintedKeys}
-            onCellPointerDown={beginSelection}
-            onCellPointerEnter={extendSelection}
-            onCellPointerUp={() => {
-              void finishSelection();
-            }}
+            onCellPointerDown={handleCellPointerDown}
             registerCellRef={registerCellRef}
           />
         </div>
@@ -331,7 +393,7 @@ export default function StrandsGame() {
         <div className="mt-[0.45rem] flex items-center justify-between gap-[0.8rem]">
           <button
             type="button"
-            className={`relative inline-flex h-16 min-w-26 items-center justify-center overflow-hidden rounded-full border-2 bg-[#101218] text-[#d8d9e2] disabled:opacity-100 ${
+            className={`relative inline-flex h-10 min-w-22 items-center justify-center overflow-hidden rounded-full border-2 bg-gray-400 text-[#d8d9e2] disabled:opacity-100 ${
               canUseHint ? "cursor-pointer border-[#f5f6fb]" : "cursor-not-allowed border-[#272a35]"
             }`}
             onClick={useHint}
@@ -342,7 +404,7 @@ export default function StrandsGame() {
               style={{ width: `${hintChargePercent}%` }}
               aria-hidden="true"
             />
-            <span className="relative z-1 text-[1.9rem] tracking-[0.01em] text-[#1b1d26] mix-blend-difference">
+            <span className="relative z-1 text-xl tracking-[0.01em] text-[#1b1d26] mix-blend-difference">
               Hint
             </span>
           </button>

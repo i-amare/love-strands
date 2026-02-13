@@ -9,6 +9,8 @@
   --pink-accent-bright: #ffb0d9;
   --trail-yellow: #f5cc36;
   --trail-blue: #4c90ff;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @theme inline {
@@ -17,6 +19,16 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-love: var(--font-love-display);
+}
+
+html,
+body {
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100svh;
 }
 
 .is-hinted::after {

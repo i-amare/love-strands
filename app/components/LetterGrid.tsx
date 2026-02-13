@@ -7,9 +7,7 @@ type LetterGridProps = {
   selectedKeys: Set<string>;
   foundKeys: Set<string>;
   hintedKeys: Set<string>;
-  onCellPointerDown: (row: number, col: number) => void;
-  onCellPointerEnter: (row: number, col: number) => void;
-  onCellPointerUp: () => void;
+  onCellPointerDown: (row: number, col: number, event: React.PointerEvent<HTMLButtonElement>) => void;
   registerCellRef: (row: number, col: number, node: HTMLButtonElement | null) => void;
 };
 
@@ -19,8 +17,6 @@ export default function LetterGrid({
   foundKeys,
   hintedKeys,
   onCellPointerDown,
-  onCellPointerEnter,
-  onCellPointerUp,
   registerCellRef,
 }: LetterGridProps) {
   const rows = grid.length;
@@ -56,9 +52,9 @@ export default function LetterGrid({
               ]
                 .filter(Boolean)
                 .join(" ")}
-              onPointerDown={() => onCellPointerDown(rowIndex, colIndex)}
-              onPointerEnter={() => onCellPointerEnter(rowIndex, colIndex)}
-              onPointerUp={onCellPointerUp}
+              data-row={rowIndex}
+              data-col={colIndex}
+              onPointerDown={(event) => onCellPointerDown(rowIndex, colIndex, event)}
               ref={(node) => registerCellRef(rowIndex, colIndex, node)}
             >
               {letter.toUpperCase()}
