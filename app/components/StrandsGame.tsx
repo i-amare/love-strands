@@ -330,7 +330,7 @@ export default function StrandsGame() {
 
   return (
     <main
-      className="min-h-svh flex justify-center p-6"
+      className="min-h-svh flex justify-center px-4"
     >
       <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
         <h1 className="m-0 text-center font-love text-4xl pb-4 leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">

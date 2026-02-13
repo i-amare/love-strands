@@ -41,7 +41,7 @@ export default function LetterGrid({
               key={key}
               type="button"
               className={[
-                "relative z-3 grid w-full aspect-square place-items-center rounded-full border-0 bg-transparent text-[#f3f4f8] text-[clamp(1.95rem,7.8vw,2.65rem)] leading-none tracking-[0.02em] uppercase transition-[background-color,color,box-shadow] duration-120 ease-[ease]",
+                "relative z-3 grid w-full aspect-square place-items-center rounded-full border-0 bg-transparent text-gray-200 text-2xl leading-none tracking-[0.02em] uppercase transition-[background-color,color,box-shadow] duration-120 ease-[ease]",
                 selectedKeys.has(key)
                   ? "bg-[rgba(245,204,54,0.22)] shadow-[inset_0_0_0_2px_rgba(229,231,235,0.9)]"
                   : "",
