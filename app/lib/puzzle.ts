@@ -4,7 +4,6 @@ export type GridCell = {
 };
 
 export type Puzzle = {
-  themeLabel: string;
   theme: string;
   grid: string[][];
   themeEntries: {
@@ -17,7 +16,6 @@ export const GRID_COLUMNS = 6;
 export const GRID_ROWS = 8;
 
 export const STATIC_PUZZLE: Puzzle = {
-  themeLabel: "Today's Theme",
   theme: 'Things I Love About You',
   grid: [
     ['N', 'O', 'T', 'J', 'T', 'S'],

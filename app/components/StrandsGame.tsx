@@ -68,7 +68,7 @@ async function validateEnglishWord(word: string): Promise<boolean> {
 }
 
 export default function StrandsGame() {
-  const { theme, themeLabel, themeEntries, grid } = STATIC_PUZZLE;
+  const { theme, themeEntries, grid } = STATIC_PUZZLE;
   const normalizedThemeEntries = useMemo(
     () =>
       themeEntries.map((entry) => ({
@@ -343,10 +343,10 @@ export default function StrandsGame() {
 
         <section
           className="overflow-hidden rounded-[0.95rem] border border-(--theme-card-border) bg-[rgba(8,10,18,0.92)] shadow-[0_15px_32px_rgba(0,0,0,0.35)]"
-          aria-label={themeLabel}
+          aria-label="Today's Theme"
         >
           <p className="m-0 text-center text-[clamp(1rem,4.3vw,1.6rem)] font-extrabold uppercase tracking-[0.04em] [background:color-mix(in_oklab,var(--theme-teal)_90%,#052331_10%)]">
-            {themeLabel}
+          Today's Theme
           </p>
           <h2 className="m-0 px-2 py-[0.48rem] pb-[0.65rem] text-center text-[clamp(1.95rem,8vw,2.7rem)] leading-[1.1] font-bold">
             {theme}
