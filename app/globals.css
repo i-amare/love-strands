@@ -14,6 +14,7 @@
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -32,6 +33,12 @@ body {
   min-height: 100svh;
 }
 
+.gradient-background {
+  background:
+    radial-gradient(circle at 50% 15%, rgba(255, 139, 193, 0.16), transparent 38%),
+    radial-gradient(circle at 50% 60%, rgba(30, 37, 58, 0.55), transparent 55%),
+    var(--background);
+}
 .is-hinted::after {
   content: "";
   position: absolute;

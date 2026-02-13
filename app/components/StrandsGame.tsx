@@ -368,7 +368,7 @@ export default function StrandsGame() {
 
   return (
     <main
-      className="min-h-svh flex justify-center px-4"
+      className="min-h-svh flex justify-center px-4 gradient-background"
     >
       <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
         <h1 className="m-0 text-center font-love text-4xl pb-4 leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
@@ -376,7 +376,7 @@ export default function StrandsGame() {
         </h1>
 
         <section
-          className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg"
+          className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg mx-6"
           aria-label="Today's Theme"
         >
           <p className="m-0 text-center font-extrabold uppercase bg-(--theme-teal) text-white tracking-[0.04em]">
