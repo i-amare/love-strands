@@ -37,7 +37,7 @@ export default function TrailOverlay({
 
   return (
     <svg
-      className="trail-overlay"
+      className="pointer-events-none absolute inset-0 z-2"
       viewBox={`0 0 ${width} ${height}`}
       aria-hidden="true"
       focusable="false"
@@ -48,10 +48,19 @@ export default function TrailOverlay({
           return null;
         }
 
-        return <polyline key={`found-${index}`} className="trail-found" points={points} />;
+        return (
+          <polyline
+            key={`found-${index}`}
+            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-blue)"
+            points={points}
+          />
+        );
       })}
       {activePath.length > 1 ? (
-        <polyline className="trail-active" points={polylinePoints(activePath, cellCenters)} />
+        <polyline
+          className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-yellow)"
+          points={polylinePoints(activePath, cellCenters)}
+        />
       ) : null}
     </svg>
   );

@@ -28,7 +28,7 @@ export default function LetterGrid({
 
   return (
     <div
-      className="letter-grid"
+      className="grid touch-none select-none grid-cols-[repeat(var(--grid-columns),minmax(0,1fr))] grid-rows-[repeat(var(--grid-rows),minmax(0,1fr))] gap-[clamp(0.2rem,2.2vw,0.5rem)]"
       style={
         {
           "--grid-rows": rows,
@@ -45,9 +45,13 @@ export default function LetterGrid({
               key={key}
               type="button"
               className={[
-                "letter-cell",
-                selectedKeys.has(key) ? "is-selected" : "",
-                foundKeys.has(key) ? "is-found" : "",
+                "relative z-3 grid w-full aspect-square place-items-center rounded-full border-0 bg-transparent text-[#f3f4f8] text-[clamp(1.95rem,7.8vw,2.65rem)] leading-none tracking-[0.02em] uppercase transition-[background-color,color,box-shadow] duration-120 ease-[ease]",
+                selectedKeys.has(key)
+                  ? "bg-[rgba(245,204,54,0.22)] shadow-[inset_0_0_0_2px_rgba(245,204,54,0.85)]"
+                  : "",
+                foundKeys.has(key)
+                  ? "bg-[rgba(76,144,255,0.38)] text-[#ecf4ff] shadow-[inset_0_0_0_2px_rgba(76,144,255,0.9)]"
+                  : "",
                 hintedKeys.has(key) ? "is-hinted" : "",
               ]
                 .filter(Boolean)

@@ -268,24 +268,40 @@ export default function StrandsGame() {
   const canUseHint = points >= HINT_COST;
 
   return (
-    <main className="love-strands-shell">
-      <div className="love-strands-board">
-        <h1 className="game-title">Love Strands</h1>
+    <main className="min-h-svh flex justify-center px-[0.65rem] pt-3 pb-[1.3rem] bg-[radial-gradient(circle_at_50%_15%,rgba(255,139,193,0.16),transparent_38%),radial-gradient(circle_at_50%_60%,rgba(30,37,58,0.55),transparent_55%),var(--background)]">
+      <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
+        <h1 className="m-0 text-center font-love text-[clamp(2rem,9vw,3.1rem)] leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
+          Love Strands
+        </h1>
 
-        <section className="theme-card" aria-label={themeLabel}>
-          <p className="theme-card-label">{themeLabel}</p>
-          <h2 className="theme-card-title">{theme}</h2>
+        <section
+          className="overflow-hidden rounded-[0.95rem] border border-(--theme-card-border) bg-[rgba(8,10,18,0.92)] shadow-[0_15px_32px_rgba(0,0,0,0.35)]"
+          aria-label={themeLabel}
+        >
+          <p className="m-0 text-center text-[clamp(1rem,4.3vw,1.6rem)] font-extrabold uppercase tracking-[0.04em] [background:color-mix(in_oklab,var(--theme-teal)_90%,#052331_10%)]">
+            {themeLabel}
+          </p>
+          <h2 className="m-0 px-2 py-[0.48rem] pb-[0.65rem] text-center text-[clamp(1.95rem,8vw,2.7rem)] leading-[1.1] font-bold">
+            {theme}
+          </h2>
         </section>
 
-        <p className="selected-word-display" aria-live="polite">
+        <p
+          className="m-[0.3rem_0_0] min-h-[2.2rem] text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-[2.4rem]"
+          aria-live="polite"
+        >
           {selectedWord || "\u00A0"}
         </p>
 
-        {toast ? <p className="word-toast">{toast.message}</p> : <p className="word-toast-spacer" />}
+        {toast ? (
+          <p className="m-0 min-h-[1.2rem] text-center text-[0.9rem] text-[#ff8992]">{toast.message}</p>
+        ) : (
+          <p className="m-0 min-h-[1.2rem] text-center text-[0.9rem]">&nbsp;</p>
+        )}
 
         <div
           ref={boardRef}
-          className="grid-stage"
+          className="relative mx-auto mt-[0.2rem] w-full max-w-120"
           onPointerUp={() => {
             void finishSelection();
           }}
@@ -312,18 +328,26 @@ export default function StrandsGame() {
           />
         </div>
 
-        <div className="bottom-bar">
+        <div className="mt-[0.45rem] flex items-center justify-between gap-[0.8rem]">
           <button
             type="button"
-            className={`hint-button ${canUseHint ? "is-ready" : ""}`}
+            className={`relative inline-flex h-16 min-w-26 items-center justify-center overflow-hidden rounded-full border-2 bg-[#101218] text-[#d8d9e2] disabled:opacity-100 ${
+              canUseHint ? "cursor-pointer border-[#f5f6fb]" : "cursor-not-allowed border-[#272a35]"
+            }`}
             onClick={useHint}
             disabled={!canUseHint}
           >
-            <span className="hint-charge" style={{ width: `${hintChargePercent}%` }} aria-hidden="true" />
-            <span className="hint-label">Hint</span>
+            <span
+              className="absolute inset-y-0 left-0 bg-white transition-[width] duration-180 ease-[ease]"
+              style={{ width: `${hintChargePercent}%` }}
+              aria-hidden="true"
+            />
+            <span className="relative z-1 text-[1.9rem] tracking-[0.01em] text-[#1b1d26] mix-blend-difference">
+              Hint
+            </span>
           </button>
 
-          <p className="progress-tally">
+          <p className="m-0 text-right text-[clamp(1.1rem,5vw,2.2rem)] leading-[1.1]">
             <strong>{foundEntryIndexes.length}</strong> of <strong>{normalizedThemeEntries.length}</strong> theme
             words found.
           </p>
