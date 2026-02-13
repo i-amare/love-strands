@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import LetterGrid from "./LetterGrid";
-import TrailOverlay from "./TrailOverlay";
 import { GRID_COLUMNS, GRID_ROWS, STATIC_PUZZLE, toWordFromPath, type GridCell } from "../lib/puzzle";
 import { cellKey, isAdjacent, isSameCell, keyFromCell } from "../lib/selectionRules";
+import LetterGrid from "./LetterGrid";
+import TrailOverlay from "./TrailOverlay";
 
 type ValidationResponse = {
   valid: boolean;
@@ -62,7 +62,7 @@ export default function StrandsGame() {
       })),
     [themeEntries],
   );
-
+ 
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cellRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -97,10 +97,10 @@ export default function StrandsGame() {
             continue;
           }
 
-          const rect = cell.getBoundingClientRect();
+          const cellRect = cell.getBoundingClientRect();
           nextCenters[key] = {
-            x: rect.left - boardRect.left + rect.width / 2,
-            y: rect.top - boardRect.top + rect.height / 2,
+            x: cellRect.left - boardRect.left + cellRect.width / 2,
+            y: cellRect.top - boardRect.top + cellRect.height / 2,
           };
         }
       }
@@ -110,14 +110,15 @@ export default function StrandsGame() {
 
     const resizeObserver = new ResizeObserver(computePositions);
     resizeObserver.observe(board);
-    computePositions();
     window.addEventListener("resize", computePositions);
+    computePositions();
 
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", computePositions);
     };
   }, []);
+
 
   useEffect(() => {
     if (!toast) {
@@ -190,9 +191,6 @@ export default function StrandsGame() {
 
       const nextCell = { row, col };
       const lastCell = current[current.length - 1];
-      if (isSameCell(lastCell, nextCell)) {
-        return current;
-      }
 
       if (current.some((cell) => isSameCell(cell, nextCell))) {
         return current;
@@ -222,9 +220,7 @@ export default function StrandsGame() {
     );
 
     if (matchedThemeEntryIndex >= 0) {
-      setFoundEntryIndexes((current) =>
-        current.includes(matchedThemeEntryIndex) ? current : [...current, matchedThemeEntryIndex],
-      );
+      setFoundEntryIndexes((current) => [...current, matchedThemeEntryIndex]);
       setHintedEntryIndex((current) => (current === matchedThemeEntryIndex ? null : current));
       return;
     }
@@ -294,11 +290,6 @@ export default function StrandsGame() {
             void finishSelection();
           }}
           onPointerCancel={clearSelection}
-          onPointerLeave={() => {
-            if (isSelecting) {
-              void finishSelection();
-            }
-          }}
         >
           <TrailOverlay
             width={boardSize.width}
