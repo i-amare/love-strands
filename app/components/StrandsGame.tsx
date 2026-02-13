@@ -21,9 +21,9 @@ type Point = {
 };
 
 const HINT_COST = 3;
-const INVALID_WORD_MESSAGE = "That word is not valid.";
-const TOO_SHORT_WORD_MESSAGE = "Word is too short.";
-const ALREADY_FOUND_WORD_MESSAGE = "You already found that word.";
+const INVALID_WORD_MESSAGE = "Invalid";
+const TOO_SHORT_WORD_MESSAGE = "Too short";
+const ALREADY_FOUND_WORD_MESSAGE = "Already found";
 
 
 function cellFromElement(node: Element | null): GridCell | null {
@@ -242,7 +242,7 @@ export default function StrandsGame() {
     }
 
     const word = toWordFromPath(path, grid).toUpperCase();
-    if (word.length < 3) {
+    if (word.length < 4) {
       setToast({ kind: "error", message: TOO_SHORT_WORD_MESSAGE });
       return;
     }
@@ -368,14 +368,8 @@ export default function StrandsGame() {
           className="m-[0.3rem_0_0] min-h-[2.2rem] text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-[2.4rem]"
           aria-live="polite"
         >
-          {selectedWord || "\u00A0"}
+          {selectedWord || toast?.message || "\u00A0"}
         </p>
-
-        {toast ? (
-          <p className="m-0 min-h-[1.2rem] text-center text-[0.9rem] text-[#ff8992]">{toast.message}</p>
-        ) : (
-          <p className="m-0 min-h-[1.2rem] text-center text-[0.9rem]">&nbsp;</p>
-        )}
 
         <div
           ref={boardRef}
