@@ -41,12 +41,13 @@ export default function LetterGrid({
             ? {
                 backgroundColor: "var(--trail-blue)",
                 color: "var(--foreground)",
-                boxShadow: "inset 0 0 0 2px rgba(76,144,255,0.9)",
+                boxShadow: "inset 0 0 0 2px var(--trail-blue)",
               }
             : isSelected
               ? {
                   backgroundColor: "var(--trail-grey)",
-                  boxShadow: "inset 0 0 0 2px rgba(229,231,235,0.9)",
+                  color: "var(--foreground)",
+                  boxShadow: "inset 0 0 0 2px var(--trail-grey)",
                 }
               : undefined;
 
