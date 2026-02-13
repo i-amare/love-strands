@@ -58,7 +58,7 @@ export default function TrailOverlay({
       })}
       {activePath.length > 1 ? (
         <polyline
-          className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-yellow)"
+          className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-grey)"
           points={polylinePoints(activePath, cellCenters)}
         />
       ) : null}
