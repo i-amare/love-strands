@@ -21,7 +21,7 @@ type Point = {
 };
 
 const HINT_COST = 3;
-const INVALID_WORD_MESSAGE = "Invalid";
+const INVALID_WORD_MESSAGE = "Word not found";
 const TOO_SHORT_WORD_MESSAGE = "Too short";
 const ALREADY_FOUND_WORD_MESSAGE = "Already found";
 const SPANGRAM_FOUND_MESSAGE = "SPANGRAM!!";
@@ -379,10 +379,10 @@ export default function StrandsGame() {
           className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg"
           aria-label="Today's Theme"
         >
-          <p className="m-0 text-center text-lg font-extrabold uppercase bg-teal-600 text-white tracking-[0.04em]">
+          <p className="m-0 text-center font-extrabold uppercase bg-(--theme-teal) text-white tracking-[0.04em]">
           Today's Theme
           </p>
-          <h2 className="m-0 px-2 py-4 text-center text-2xl font-bold">
+          <h2 className="m-0 px-2 py-4 text-center text-xl font-bold tracking-[0.02em]">
             {theme}
           </h2>
         </section>
