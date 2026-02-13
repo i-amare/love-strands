@@ -22,6 +22,9 @@ type Point = {
 
 const HINT_COST = 3;
 const INVALID_WORD_MESSAGE = "That word is not valid.";
+const TOO_SHORT_WORD_MESSAGE = "Word is too short.";
+const ALREADY_FOUND_WORD_MESSAGE = "You already found that word.";
+
 
 function cellFromElement(node: Element | null): GridCell | null {
   const cellNode = node?.closest<HTMLButtonElement>("[data-row][data-col]");
@@ -87,11 +90,13 @@ export default function StrandsGame() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedPath, setSelectedPath] = useState<GridCell[]>([]);
   const [foundEntryIndexes, setFoundEntryIndexes] = useState<number[]>([]);
+  const [foundWords, setFoundWords] = useState<string[]>([]);
   const [points, setPoints] = useState(0);
   const [hintedEntryIndex, setHintedEntryIndex] = useState<number | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
 
   const foundEntrySet = useMemo(() => new Set(foundEntryIndexes), [foundEntryIndexes]);
+  const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -238,23 +243,33 @@ export default function StrandsGame() {
 
     const word = toWordFromPath(path, grid).toUpperCase();
     if (word.length < 3) {
-      setToast({ kind: "error", message: INVALID_WORD_MESSAGE });
+      setToast({ kind: "error", message: TOO_SHORT_WORD_MESSAGE });
       return;
     }
 
-    const matchedThemeEntryIndex = normalizedThemeEntries.findIndex(
-      (entry, entryIndex) => !foundEntrySet.has(entryIndex) && arePathsEqual(path, entry.solution),
-    );
+    const matchedThemeEntryIndex = normalizedThemeEntries.findIndex((entry) => arePathsEqual(path, entry.solution));
 
     if (matchedThemeEntryIndex >= 0) {
+      if (foundEntrySet.has(matchedThemeEntryIndex)) {
+        setToast({ kind: "error", message: ALREADY_FOUND_WORD_MESSAGE });
+        return;
+      }
+
       setFoundEntryIndexes((current) => [...current, matchedThemeEntryIndex]);
+      setFoundWords((current) => (current.includes(word) ? current : [...current, word]));
       setHintedEntryIndex((current) => (current === matchedThemeEntryIndex ? null : current));
+      return;
+    }
+
+    if (foundWordSet.has(word)) {
+      setToast({ kind: "error", message: ALREADY_FOUND_WORD_MESSAGE });
       return;
     }
 
     const isValid = await validateEnglishWord(word);
     if (isValid) {
       setPoints((current) => current + 1);
+      setFoundWords((current) => (current.includes(word) ? current : [...current, word]));
       return;
     }
 
