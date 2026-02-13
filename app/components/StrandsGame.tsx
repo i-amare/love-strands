@@ -462,8 +462,8 @@ export default function StrandsGame() {
             <p className="m-0 font-love text-[clamp(2rem,7vw,3.2rem)] leading-[1.1] tracking-[0.03em] text-(--pink-accent-bright)">
               Happy Valentine&apos;s Day
             </p>
-            <p className="m-0 text-[clamp(1.15rem,4.4vw,1.7rem)] font-semibold tracking-[0.02em] text-white">
-              I love you
+            <p className="m-0 text-xl font-semibold tracking-[0.02em] text-white">
+              {"I love you baby <3"}
             </p>
             <button
               type="button"
