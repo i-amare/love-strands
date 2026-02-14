@@ -374,8 +374,8 @@ export default function StrandsGame() {
     <main
       className="min-h-svh flex justify-center px-4 gradient-background"
     >
-      <div className="flex w-full max-w-136 flex-col gap-[0.55rem] sm:gap-3">
-        <h1 className="m-0 text-center font-love text-4xl pb-4 leading-[1.05] tracking-[0.02em] text-(--pink-accent-bright) [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
+      <div className="flex w-full max-w-xl flex-col gap-2 sm:gap-3">
+        <h1 className="m-0 pb-4 text-center font-love text-4xl leading-tight tracking-wide text-pink-accent-bright [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
           Love Strands
         </h1>
 
@@ -386,13 +386,13 @@ export default function StrandsGame() {
           <p className="m-0 text-center font-extrabold uppercase bg-(--theme-teal) text-white tracking-[0.04em]">
           Today's Theme
           </p>
-          <h2 className="m-0 px-2 py-4 text-center text-xl font-bold tracking-[0.02em]">
+          <h2 className="m-0 px-2 py-4 text-center text-xl font-bold tracking-wide">
             {theme}
           </h2>
         </section>
 
         <p
-          className="m-[0.3rem_0_0] min-h-[2.2rem] text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-[2.4rem]"
+          className="mt-1 min-h-9 text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-10"
           style={{ color: toast?.kind === "error" ? "#ff6467" : "var(--foreground)" }}
           aria-live="polite"
         >
@@ -401,7 +401,7 @@ export default function StrandsGame() {
 
         <div
           ref={boardRef}
-          className="relative mx-auto mt-[0.2rem] w-full max-w-120 px-8"
+          className="relative mx-auto mt-1 w-full max-w-lg px-8"
           onPointerMove={handleBoardPointerMove}
           onPointerUp={handleBoardPointerUp}
           onPointerCancel={handleBoardPointerCancel}
@@ -425,7 +425,7 @@ export default function StrandsGame() {
           />
         </div>
 
-        <div className="mt-[0.45rem] flex items-center justify-between gap-[0.8rem]">
+        <div className="mt-2 flex items-center justify-between gap-3">
           <button
             type="button"
             className={`relative inline-flex h-10 min-w-22 items-center justify-center overflow-hidden rounded-full border-2 text-[#d8d9e2] disabled:opacity-100 ${
@@ -435,11 +435,11 @@ export default function StrandsGame() {
             disabled={!canUseHint}
           >
             <span
-              className="absolute inset-y-0 left-0 bg-white transition-[width] duration-180 ease-[ease]"
+              className="absolute inset-y-0 left-0 bg-white transition-all duration-200 ease-in-out"
               style={{ width: `${hintChargePercent}%` }}
               aria-hidden="true"
             />
-            <span className="relative z-1 text-xl tracking-[0.01em] mix-blend-difference">
+            <span className="relative z-10 text-xl tracking-tight mix-blend-difference">
               Hint
             </span>
           </button>
@@ -459,15 +459,15 @@ export default function StrandsGame() {
           aria-label="Valentine&apos;s Day celebration"
         >
           <div className="valentine-card">
-            <p className="m-0 font-love text-[clamp(2rem,7vw,3.2rem)] leading-[1.1] tracking-[0.03em] text-(--pink-accent-bright)">
+            <p className="m-0 font-love text-[clamp(2rem,7vw,3.2rem)] leading-snug tracking-wide text-pink-accent-bright">
               Happy Valentine&apos;s Day
             </p>
-            <p className="m-0 text-xl font-semibold tracking-[0.02em] text-white">
+            <p className="m-0 text-xl font-semibold tracking-wide text-white">
               {"I love you baby <3"}
             </p>
             <button
               type="button"
-              className="valentine-close"
+              className="mt-1.5 min-w-28 cursor-pointer rounded-full border border-[rgba(255,176,217,0.66)] bg-[rgba(255,176,217,0.14)] px-5 py-1.5 font-bold tracking-tight text-[#fff3fa] transition-all duration-150 ease-in-out hover:-translate-y-px hover:bg-[rgba(255,176,217,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(255,176,217,0.95)]"
               onClick={() => setCompletionPopupDismissed(true)}
             >
               Close

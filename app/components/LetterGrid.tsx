@@ -26,7 +26,7 @@ export default function LetterGrid({
 
   return (
     <div
-      className="grid touch-none select-none grid-cols-[repeat(var(--grid-columns),minmax(0,1fr))] grid-rows-[repeat(var(--grid-rows),minmax(0,1fr))] gap-[clamp(0.2rem,2.2vw,0.5rem)]"
+      className="grid touch-none select-none grid-cols-[repeat(var(--grid-columns),minmax(0,1fr))] grid-rows-[repeat(var(--grid-rows),minmax(0,1fr))] gap-1 sm:gap-2"
       style={
         {
           "--grid-rows": rows,
@@ -65,7 +65,7 @@ export default function LetterGrid({
               key={key}
               type="button"
               className={[
-                "relative z-3 grid w-full aspect-square place-items-center rounded-full border-0 bg-transparent text-gray-200 text-2xl leading-none tracking-[0.02em] uppercase transition-[background-color,color,box-shadow] duration-120 ease-[ease]",
+                "relative z-20 grid aspect-square w-full place-items-center rounded-full border-0 bg-transparent text-2xl leading-none tracking-wide text-gray-200 uppercase transition-colors duration-150 ease-in-out",
                 hintedKeys.has(key) ? "is-hinted" : "",
               ]
                 .filter(Boolean)

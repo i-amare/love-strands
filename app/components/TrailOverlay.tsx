@@ -39,7 +39,7 @@ export default function TrailOverlay({
 
   return (
     <svg
-      className="pointer-events-none absolute inset-0 z-2"
+      className="pointer-events-none absolute inset-0 z-10"
       viewBox={`0 0 ${width} ${height}`}
       aria-hidden="true"
       focusable="false"
@@ -53,7 +53,7 @@ export default function TrailOverlay({
         return (
           <polyline
             key={`found-${index}`}
-            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-blue)"
+            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-trail-blue"
             points={points}
           />
         );
@@ -67,14 +67,14 @@ export default function TrailOverlay({
         return (
           <polyline
             key={`spangram-${index}`}
-            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-yellow)"
+            className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-trail-yellow"
             points={points}
           />
         );
       })}
       {activePath.length > 1 ? (
         <polyline
-          className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-(--trail-grey)"
+          className="fill-none [stroke-linecap:round] [stroke-linejoin:round] stroke-9 stroke-trail-grey"
           points={polylinePoints(activePath, cellCenters)}
         />
       ) : null}
