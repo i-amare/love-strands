@@ -36,7 +36,17 @@ body {
 }
 
 body {
+  min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
 }
 
 .gradient-background {

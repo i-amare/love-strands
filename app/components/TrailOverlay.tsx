@@ -40,7 +40,10 @@ export default function TrailOverlay({
   return (
     <svg
       className="pointer-events-none absolute inset-0 z-10"
+      width={width}
+      height={height}
       viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
     >

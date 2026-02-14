@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { GRID_COLUMNS, GRID_ROWS, STATIC_PUZZLE, toWordFromPath, type GridCell } from "../lib/puzzle";
 import { cellKey, isAdjacent, isSameCell, keyFromCell } from "../lib/selectionRules";
 import LetterGrid from "./LetterGrid";
@@ -85,6 +85,7 @@ export default function StrandsGame() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cellRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const activePointerIdRef = useRef<number | null>(null);
+  const remeasureRafRef = useRef<number | null>(null);
 
   const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
   const [cellCenters, setCellCenters] = useState<Record<string, Point>>({});
@@ -101,47 +102,72 @@ export default function StrandsGame() {
   const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
   const [spangramEntryIndex] = useState(themeEntries.length - 1);
 
+  const computePositions = useCallback(() => {
+    const board = boardRef.current;
+    if (!board) {
+      return;
+    }
+
+    const nextCenters: Record<string, Point> = {};
+    const boardRect = board.getBoundingClientRect();
+
+    setBoardSize({ width: boardRect.width, height: boardRect.height });
+
+    for (let row = 0; row < GRID_ROWS; row += 1) {
+      for (let col = 0; col < GRID_COLUMNS; col += 1) {
+        const key = cellKey(row, col);
+        const cell = cellRefs.current[key];
+        if (!cell) {
+          continue;
+        }
+
+        const cellRect = cell.getBoundingClientRect();
+        nextCenters[key] = {
+          x: cellRect.left - boardRect.left + cellRect.width / 2,
+          y: cellRect.top - boardRect.top + cellRect.height / 2,
+        };
+      }
+    }
+
+    setCellCenters(nextCenters);
+  }, []);
+
+  const scheduleComputePositions = useCallback(() => {
+    if (remeasureRafRef.current !== null) {
+      window.cancelAnimationFrame(remeasureRafRef.current);
+    }
+
+    remeasureRafRef.current = window.requestAnimationFrame(() => {
+      remeasureRafRef.current = null;
+      computePositions();
+    });
+  }, [computePositions]);
+
   useEffect(() => {
     const board = boardRef.current;
     if (!board) {
       return;
     }
 
-    const computePositions = () => {
-      const nextCenters: Record<string, Point> = {};
-      const boardRect = board.getBoundingClientRect();
-
-      setBoardSize({ width: boardRect.width, height: boardRect.height });
-
-      for (let row = 0; row < GRID_ROWS; row += 1) {
-        for (let col = 0; col < GRID_COLUMNS; col += 1) {
-          const key = cellKey(row, col);
-          const cell = cellRefs.current[key];
-          if (!cell) {
-            continue;
-          }
-
-          const cellRect = cell.getBoundingClientRect();
-          nextCenters[key] = {
-            x: cellRect.left - boardRect.left + cellRect.width / 2,
-            y: cellRect.top - boardRect.top + cellRect.height / 2,
-          };
-        }
-      }
-
-      setCellCenters(nextCenters);
-    };
-
-    const resizeObserver = new ResizeObserver(computePositions);
+    const resizeObserver = new ResizeObserver(scheduleComputePositions);
     resizeObserver.observe(board);
-    window.addEventListener("resize", computePositions);
-    computePositions();
+    window.addEventListener("resize", scheduleComputePositions);
+    window.addEventListener("orientationchange", scheduleComputePositions);
+    window.visualViewport?.addEventListener("resize", scheduleComputePositions);
+    window.visualViewport?.addEventListener("scroll", scheduleComputePositions);
+    scheduleComputePositions();
 
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener("resize", computePositions);
+      window.removeEventListener("resize", scheduleComputePositions);
+      window.removeEventListener("orientationchange", scheduleComputePositions);
+      window.visualViewport?.removeEventListener("resize", scheduleComputePositions);
+      window.visualViewport?.removeEventListener("scroll", scheduleComputePositions);
+      if (remeasureRafRef.current !== null) {
+        window.cancelAnimationFrame(remeasureRafRef.current);
+      }
     };
-  }, []);
+  }, [scheduleComputePositions]);
 
 
   useEffect(() => {
@@ -372,7 +398,7 @@ export default function StrandsGame() {
 
   return (
     <main
-      className="min-h-svh flex justify-center px-4 gradient-background"
+      className="app-shell flex justify-center px-4 gradient-background"
     >
       <div className="flex w-full max-w-xl flex-col gap-2 sm:gap-3">
         <h1 className="m-0 pb-4 text-center font-love text-4xl leading-tight tracking-wide text-pink-accent-bright [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
@@ -383,8 +409,8 @@ export default function StrandsGame() {
           className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg mx-6"
           aria-label="Today's Theme"
         >
-          <p className="m-0 text-center font-extrabold uppercase bg-(--theme-teal) text-white tracking-[0.04em]">
-          Today's Theme
+          <p className="m-0 text-center font-extrabold uppercase bg-theme-teal text-white tracking-[0.04em]">
+          Today&apos;s Theme
           </p>
           <h2 className="m-0 px-2 py-4 text-center text-xl font-bold tracking-wide">
             {theme}
