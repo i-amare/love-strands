@@ -1,8 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { GRID_COLUMNS, GRID_ROWS, STATIC_PUZZLE, toWordFromPath, type GridCell } from "../lib/puzzle";
-import { cellKey, isAdjacent, isSameCell, keyFromCell } from "../lib/selectionRules";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import {
+  GRID_COLUMNS,
+  GRID_ROWS,
+  STATIC_PUZZLE,
+  toWordFromPath,
+  type GridCell,
+} from "../lib/puzzle";
+import {
+  cellKey,
+  isAdjacent,
+  isSameCell,
+  keyFromCell,
+} from "../lib/selectionRules";
 import LetterGrid from "./LetterGrid";
 import TrailOverlay from "./TrailOverlay";
 
@@ -25,7 +43,6 @@ const INVALID_WORD_MESSAGE = "Word not found";
 const TOO_SHORT_WORD_MESSAGE = "Too short";
 const ALREADY_FOUND_WORD_MESSAGE = "Already found";
 const SPANGRAM_FOUND_MESSAGE = "SPANGRAM!!";
-
 
 function cellFromElement(node: Element | null): GridCell | null {
   const cellNode = node?.closest<HTMLButtonElement>("[data-row][data-col]");
@@ -81,7 +98,7 @@ export default function StrandsGame() {
       })),
     [themeEntries],
   );
- 
+
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cellRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const activePointerIdRef = useRef<number | null>(null);
@@ -96,9 +113,17 @@ export default function StrandsGame() {
   const [points, setPoints] = useState(0);
   const [hintedEntryIndex, setHintedEntryIndex] = useState<number | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
-  const [completionPopupDismissed, setCompletionPopupDismissed] = useState(false);
+  const [completionPopupDismissed, setCompletionPopupDismissed] =
+    useState(false);
 
-  const foundEntrySet = useMemo(() => new Set(foundEntryIndexes), [foundEntryIndexes]);
+  useEffect(() => {
+    validateEnglishWord("");
+  }, []);
+
+  const foundEntrySet = useMemo(
+    () => new Set(foundEntryIndexes),
+    [foundEntryIndexes],
+  );
   const foundWordSet = useMemo(() => new Set(foundWords), [foundWords]);
   const [spangramEntryIndex] = useState(themeEntries.length - 1);
 
@@ -161,14 +186,19 @@ export default function StrandsGame() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", scheduleComputePositions);
       window.removeEventListener("orientationchange", scheduleComputePositions);
-      window.visualViewport?.removeEventListener("resize", scheduleComputePositions);
-      window.visualViewport?.removeEventListener("scroll", scheduleComputePositions);
+      window.visualViewport?.removeEventListener(
+        "resize",
+        scheduleComputePositions,
+      );
+      window.visualViewport?.removeEventListener(
+        "scroll",
+        scheduleComputePositions,
+      );
       if (remeasureRafRef.current !== null) {
         window.cancelAnimationFrame(remeasureRafRef.current);
       }
     };
   }, [scheduleComputePositions]);
-
 
   useEffect(() => {
     if (!toast) {
@@ -179,7 +209,10 @@ export default function StrandsGame() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
-  const selectedWord = useMemo(() => toWordFromPath(selectedPath, grid), [selectedPath, grid]);
+  const selectedWord = useMemo(
+    () => toWordFromPath(selectedPath, grid),
+    [selectedPath, grid],
+  );
 
   const selectedKeys = useMemo(
     () => new Set(selectedPath.map((cell) => keyFromCell(cell))),
@@ -237,7 +270,11 @@ export default function StrandsGame() {
     return keys;
   }, [hintedEntryIndex, normalizedThemeEntries, foundEntrySet]);
 
-  function registerCellRef(row: number, col: number, node: HTMLButtonElement | null) {
+  function registerCellRef(
+    row: number,
+    col: number,
+    node: HTMLButtonElement | null,
+  ) {
     cellRefs.current[cellKey(row, col)] = node;
   }
 
@@ -247,7 +284,11 @@ export default function StrandsGame() {
     setSelectedPath([{ row, col }]);
   }
 
-  function handleCellPointerDown(row: number, col: number, event: ReactPointerEvent<HTMLButtonElement>) {
+  function handleCellPointerDown(
+    row: number,
+    col: number,
+    event: ReactPointerEvent<HTMLButtonElement>,
+  ) {
     if (event.pointerType === "mouse" && event.button !== 0) {
       return;
     }
@@ -294,7 +335,9 @@ export default function StrandsGame() {
       return;
     }
 
-    const matchedThemeEntryIndex = normalizedThemeEntries.findIndex((entry) => arePathsEqual(path, entry.solution));
+    const matchedThemeEntryIndex = normalizedThemeEntries.findIndex((entry) =>
+      arePathsEqual(path, entry.solution),
+    );
 
     if (matchedThemeEntryIndex >= 0) {
       if (foundEntrySet.has(matchedThemeEntryIndex)) {
@@ -303,8 +346,12 @@ export default function StrandsGame() {
       }
 
       setFoundEntryIndexes((current) => [...current, matchedThemeEntryIndex]);
-      setFoundWords((current) => (current.includes(word) ? current : [...current, word]));
-      setHintedEntryIndex((current) => (current === matchedThemeEntryIndex ? null : current));
+      setFoundWords((current) =>
+        current.includes(word) ? current : [...current, word],
+      );
+      setHintedEntryIndex((current) =>
+        current === matchedThemeEntryIndex ? null : current,
+      );
       if (matchedThemeEntryIndex === spangramEntryIndex) {
         setToast({ kind: "info", message: SPANGRAM_FOUND_MESSAGE });
       }
@@ -319,7 +366,9 @@ export default function StrandsGame() {
     const isValid = await validateEnglishWord(word);
     if (isValid) {
       setPoints((current) => current + 1);
-      setFoundWords((current) => (current.includes(word) ? current : [...current, word]));
+      setFoundWords((current) =>
+        current.includes(word) ? current : [...current, word],
+      );
       return;
     }
 
@@ -347,7 +396,9 @@ export default function StrandsGame() {
     }
 
     event.preventDefault();
-    const cell = cellFromElement(document.elementFromPoint(event.clientX, event.clientY));
+    const cell = cellFromElement(
+      document.elementFromPoint(event.clientX, event.clientY),
+    );
     if (!cell) {
       return;
     }
@@ -356,7 +407,10 @@ export default function StrandsGame() {
   }
 
   function handleBoardPointerUp(event: ReactPointerEvent<HTMLDivElement>) {
-    if (activePointerIdRef.current !== null && activePointerIdRef.current !== event.pointerId) {
+    if (
+      activePointerIdRef.current !== null &&
+      activePointerIdRef.current !== event.pointerId
+    ) {
       return;
     }
 
@@ -380,7 +434,9 @@ export default function StrandsGame() {
       return;
     }
 
-    const nextHintEntryIndex = normalizedThemeEntries.findIndex((_, entryIndex) => !foundEntrySet.has(entryIndex));
+    const nextHintEntryIndex = normalizedThemeEntries.findIndex(
+      (_, entryIndex) => !foundEntrySet.has(entryIndex),
+    );
     if (nextHintEntryIndex < 0) {
       return;
     }
@@ -393,24 +449,23 @@ export default function StrandsGame() {
   const hintChargePercent = (hintChargeLevel / HINT_COST) * 100;
   const canUseHint = points >= HINT_COST;
   const isPuzzleComplete =
-    normalizedThemeEntries.length > 0 && foundEntryIndexes.length === normalizedThemeEntries.length;
+    normalizedThemeEntries.length > 0 &&
+    foundEntryIndexes.length === normalizedThemeEntries.length;
   const showCompletionPopup = isPuzzleComplete && !completionPopupDismissed;
 
   return (
-    <main
-      className="app-shell flex justify-center px-4 gradient-background"
-    >
+    <main className="app-shell gradient-background flex justify-center px-4">
       <div className="flex w-full max-w-xl flex-col gap-2 sm:gap-3">
-        <h1 className="m-0 pb-4 text-center font-love text-4xl leading-tight tracking-wide text-pink-accent-bright [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
+        <h1 className="font-love text-pink-accent-bright m-0 pb-4 text-center text-4xl leading-tight tracking-wide [text-shadow:0_0_14px_rgba(255,98,170,0.6)]">
           Love Strands
         </h1>
 
         <section
-          className="overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg mx-6"
+          className="mx-6 overflow-hidden rounded-lg border border-gray-700 bg-gray-900 shadow-lg"
           aria-label="Today's Theme"
         >
-          <p className="m-0 text-center font-extrabold uppercase bg-theme-teal text-white tracking-[0.04em]">
-          Today&apos;s Theme
+          <p className="bg-theme-teal m-0 text-center font-extrabold tracking-[0.04em] text-white uppercase">
+            Today&apos;s Theme
           </p>
           <h2 className="m-0 px-2 py-4 text-center text-xl font-bold tracking-wide">
             {theme}
@@ -418,8 +473,10 @@ export default function StrandsGame() {
         </section>
 
         <p
-          className="mt-1 min-h-9 text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold uppercase tracking-[0.18em] text-[#f8f9ff] sm:min-h-10"
-          style={{ color: toast?.kind === "error" ? "#ff6467" : "var(--foreground)" }}
+          className="mt-1 min-h-9 text-center text-[clamp(1.05rem,4.8vw,1.5rem)] font-bold tracking-[0.18em] text-[#f8f9ff] uppercase sm:min-h-10"
+          style={{
+            color: toast?.kind === "error" ? "#ff6467" : "var(--foreground)",
+          }}
           aria-live="polite"
         >
           {selectedWord || toast?.message || "\u00A0"}
@@ -437,8 +494,17 @@ export default function StrandsGame() {
             height={boardSize.height}
             cellCenters={cellCenters}
             activePath={selectedPath}
-            foundPaths={foundEntryIndexes.filter((entryIndex) => entryIndex !== spangramEntryIndex).map((entryIndex) => normalizedThemeEntries[entryIndex]?.solution ?? [])}
-            spangramPaths={foundEntryIndexes.includes(spangramEntryIndex) ? [normalizedThemeEntries[spangramEntryIndex]?.solution ?? []] : []}
+            foundPaths={foundEntryIndexes
+              .filter((entryIndex) => entryIndex !== spangramEntryIndex)
+              .map(
+                (entryIndex) =>
+                  normalizedThemeEntries[entryIndex]?.solution ?? [],
+              )}
+            spangramPaths={
+              foundEntryIndexes.includes(spangramEntryIndex)
+                ? [normalizedThemeEntries[spangramEntryIndex]?.solution ?? []]
+                : []
+            }
           />
           <LetterGrid
             grid={grid}
@@ -455,7 +521,9 @@ export default function StrandsGame() {
           <button
             type="button"
             className={`relative inline-flex h-10 min-w-22 items-center justify-center overflow-hidden rounded-full border-2 text-[#d8d9e2] disabled:opacity-100 ${
-              canUseHint ? "cursor-pointer border-[#f5f6fb]" : "cursor-not-allowed border-[#272a35]"
+              canUseHint
+                ? "cursor-pointer border-[#f5f6fb]"
+                : "cursor-not-allowed border-[#272a35]"
             }`}
             onClick={useHint}
             disabled={!canUseHint}
@@ -471,8 +539,8 @@ export default function StrandsGame() {
           </button>
 
           <p className="m-0 text-right text-lg leading-normal">
-            <strong>{foundEntryIndexes.length}</strong> of <strong>{normalizedThemeEntries.length}</strong> theme
-            words found.
+            <strong>{foundEntryIndexes.length}</strong> of{" "}
+            <strong>{normalizedThemeEntries.length}</strong> theme words found.
           </p>
         </div>
       </div>
@@ -482,10 +550,10 @@ export default function StrandsGame() {
           className="valentine-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Valentine&apos;s Day celebration"
+          aria-label="Valentine's Day celebration"
         >
           <div className="valentine-card">
-            <p className="m-0 font-love text-[clamp(2rem,7vw,3.2rem)] leading-snug tracking-wide text-pink-accent-bright">
+            <p className="font-love text-pink-accent-bright m-0 text-[clamp(2rem,7vw,3.2rem)] leading-snug tracking-wide">
               Happy Valentine&apos;s Day
             </p>
             <p className="m-0 text-xl font-semibold tracking-wide text-white">

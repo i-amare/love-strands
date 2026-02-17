@@ -8,8 +8,16 @@ type LetterGridProps = {
   foundKeys: Set<string>;
   spangramKeys: Set<string>;
   hintedKeys: Set<string>;
-  onCellPointerDown: (row: number, col: number, event: React.PointerEvent<HTMLButtonElement>) => void;
-  registerCellRef: (row: number, col: number, node: HTMLButtonElement | null) => void;
+  onCellPointerDown: (
+    row: number,
+    col: number,
+    event: React.PointerEvent<HTMLButtonElement>,
+  ) => void;
+  registerCellRef: (
+    row: number,
+    col: number,
+    node: HTMLButtonElement | null,
+  ) => void;
 };
 
 export default function LetterGrid({
@@ -26,7 +34,7 @@ export default function LetterGrid({
 
   return (
     <div
-      className="grid touch-none select-none grid-cols-[repeat(var(--grid-columns),minmax(0,1fr))] grid-rows-[repeat(var(--grid-rows),minmax(0,1fr))] gap-1 sm:gap-2"
+      className="grid touch-none grid-cols-[repeat(var(--grid-columns),minmax(0,1fr))] grid-rows-[repeat(var(--grid-rows),minmax(0,1fr))] gap-1 select-none sm:gap-2"
       style={
         {
           "--grid-rows": rows,
@@ -47,18 +55,18 @@ export default function LetterGrid({
                 boxShadow: "inset 0 0 0 2px var(--trail-yellow)",
               }
             : isFound
-            ? {
-                backgroundColor: "var(--trail-blue)",
-                color: "var(--foreground)",
-                boxShadow: "inset 0 0 0 2px var(--trail-blue)",
-              }
-            : isSelected
               ? {
-                  backgroundColor: "var(--trail-grey)",
+                  backgroundColor: "var(--trail-blue)",
                   color: "var(--foreground)",
-                  boxShadow: "inset 0 0 0 2px var(--trail-grey)",
+                  boxShadow: "inset 0 0 0 2px var(--trail-blue)",
                 }
-              : undefined;
+              : isSelected
+                ? {
+                    backgroundColor: "var(--trail-grey)",
+                    color: "var(--foreground)",
+                    boxShadow: "inset 0 0 0 2px var(--trail-grey)",
+                  }
+                : undefined;
 
           return (
             <button
@@ -73,7 +81,9 @@ export default function LetterGrid({
               style={tileStyle}
               data-row={rowIndex}
               data-col={colIndex}
-              onPointerDown={(event) => onCellPointerDown(rowIndex, colIndex, event)}
+              onPointerDown={(event) =>
+                onCellPointerDown(rowIndex, colIndex, event)
+              }
               ref={(node) => registerCellRef(rowIndex, colIndex, node)}
             >
               {letter.toUpperCase()}

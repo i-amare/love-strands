@@ -1,7 +1,10 @@
 import type { GridCell } from "./puzzle";
 import { isAdjacent } from "./selectionRules";
 
-export function solveWordPath(grid: string[][], word: string): GridCell[] | null {
+export function solveWordPath(
+  grid: string[][],
+  word: string,
+): GridCell[] | null {
   if (!word) {
     return null;
   }
@@ -11,7 +14,12 @@ export function solveWordPath(grid: string[][], word: string): GridCell[] | null
   const cols = grid[0]?.length ?? 0;
   const visited = new Set<string>();
 
-  function search(row: number, col: number, index: number, path: GridCell[]): GridCell[] | null {
+  function search(
+    row: number,
+    col: number,
+    index: number,
+    path: GridCell[],
+  ): GridCell[] | null {
     if (grid[row]?.[col] !== target[index]) {
       return null;
     }
@@ -28,8 +36,16 @@ export function solveWordPath(grid: string[][], word: string): GridCell[] | null
 
     visited.add(key);
 
-    for (let nextRow = Math.max(0, row - 1); nextRow <= Math.min(rows - 1, row + 1); nextRow += 1) {
-      for (let nextCol = Math.max(0, col - 1); nextCol <= Math.min(cols - 1, col + 1); nextCol += 1) {
+    for (
+      let nextRow = Math.max(0, row - 1);
+      nextRow <= Math.min(rows - 1, row + 1);
+      nextRow += 1
+    ) {
+      for (
+        let nextCol = Math.max(0, col - 1);
+        nextCol <= Math.min(cols - 1, col + 1);
+        nextCol += 1
+      ) {
         if (!isAdjacent({ row, col }, { row: nextRow, col: nextCol })) {
           continue;
         }

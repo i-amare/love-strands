@@ -16,20 +16,20 @@ export const GRID_COLUMNS = 6;
 export const GRID_ROWS = 8;
 
 export const STATIC_PUZZLE: Puzzle = {
-  theme: 'Things I Love About You',
+  theme: "Things I Love About You",
   grid: [
-    ['S', 'N', 'O', 'T', 'T', 'S'],
-    ['M', 'C', 'A', 'J', 'E', 'N'],
-    ['A', 'R', 'I', 'U', 'T', 'O'],
-    ['I', 'R', 'N', 'S', 'H', 'H'],
-    ['N', 'T', 'G', 'T', 'O', 'U'],
-    ['D', 'E', 'P', 'S', 'L', 'G'],
-    ['D', 'N', 'E', 'E', 'U', 'H'],
-    ['E', 'N', 'T', 'X', 'F', 'T'],
+    ["S", "N", "O", "T", "T", "S"],
+    ["M", "C", "A", "J", "E", "N"],
+    ["A", "R", "I", "U", "T", "O"],
+    ["I", "R", "N", "S", "H", "H"],
+    ["N", "T", "G", "T", "O", "U"],
+    ["D", "E", "P", "S", "L", "G"],
+    ["D", "N", "E", "E", "U", "H"],
+    ["E", "N", "T", "X", "F", "T"],
   ],
   themeEntries: [
     {
-      word: 'SMART',
+      word: "SMART",
       solution: [
         { row: 0, col: 0 },
         { row: 1, col: 0 },
@@ -39,7 +39,7 @@ export const STATIC_PUZZLE: Puzzle = {
       ],
     },
     {
-      word: 'CARING',
+      word: "CARING",
       solution: [
         { row: 1, col: 1 },
         { row: 1, col: 2 },
@@ -50,7 +50,7 @@ export const STATIC_PUZZLE: Puzzle = {
       ],
     },
     {
-      word: 'HONEST',
+      word: "HONEST",
       solution: [
         { row: 3, col: 5 },
         { row: 2, col: 5 },
@@ -61,7 +61,7 @@ export const STATIC_PUZZLE: Puzzle = {
       ],
     },
     {
-      word: 'THOUGHTFUL',
+      word: "THOUGHTFUL",
       solution: [
         { row: 2, col: 4 },
         { row: 3, col: 4 },
@@ -76,7 +76,7 @@ export const STATIC_PUZZLE: Puzzle = {
       ],
     },
     {
-      word: 'INDEPENDENT',
+      word: "INDEPENDENT",
       solution: [
         { row: 3, col: 0 },
         { row: 4, col: 0 },
@@ -92,7 +92,7 @@ export const STATIC_PUZZLE: Puzzle = {
       ],
     },
     {
-      word: 'NOTJUSTSEX',
+      word: "NOTJUSTSEX",
       solution: [
         { row: 0, col: 1 },
         { row: 0, col: 2 },
@@ -110,5 +110,5 @@ export const STATIC_PUZZLE: Puzzle = {
 };
 
 export function toWordFromPath(path: GridCell[], grid: string[][]): string {
-  return path.map(({ row, col }) => grid[row]?.[col] ?? '').join('');
+  return path.map(({ row, col }) => grid[row]?.[col] ?? "").join("");
 }
