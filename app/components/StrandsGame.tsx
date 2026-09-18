@@ -554,7 +554,7 @@ export default function StrandsGame() {
         >
           <div className="valentine-card">
             <p className="font-love text-pink-accent-bright m-0 text-[clamp(2rem,7vw,3.2rem)] leading-snug tracking-wide">
-              Happy Valentine&apos;s Day
+              {"<3"}
             </p>
             <p className="m-0 text-xl font-semibold tracking-wide text-white">
               {"I love you baby <3"}
