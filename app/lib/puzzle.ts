@@ -19,8 +19,8 @@ export const STATIC_PUZZLE: Puzzle = {
   theme: "The Road to Love",
   grid: [
     ["I", "D", "D", "L", "I", "R"],
-    ["M", "I", "O", "E", "B", "D"],
-    ["S", "D", "N", "F", "O", "R"],
+    ["M", "O", "N", "E", "B", "D"],
+    ["S", "I", "D", "F", "O", "R"],
     ["T", "R", "E", "E", "T", "E"],
     ["R", "I", "S", "S", "N", "S"],
     ["R", "O", "N", "E", "A", "T"],
@@ -56,10 +56,10 @@ export const STATIC_PUZZLE: Puzzle = {
     {
       word: "DION",
       solution: [
+        { row: 2, col: 2 },
         { row: 2, col: 1 },
         { row: 1, col: 1 },
         { row: 1, col: 2 },
-        { row: 2, col: 2 },
       ],
     },
     {
