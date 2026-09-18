@@ -95,6 +95,22 @@ export const STATIC_PUZZLE: Puzzle = {
         { row: 7, col: 4 },
       ],
     },
+    {
+      word: "STREETNAMES",
+      solution: [
+        { row: 4, col: 5 },
+        { row: 3, col: 4 },
+        { row: 2, col: 5 },
+        { row: 3, col: 5 },
+        { row: 3, col: 3 },
+        { row: 5, col: 5 },
+        { row: 4, col: 4 },
+        { row: 5, col: 4 },
+        { row: 6, col: 3 },
+        { row: 5, col: 3 },
+        { row: 7, col: 5 },
+      ],
+    },
   ],
 };
 
